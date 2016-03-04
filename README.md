@@ -14,33 +14,33 @@ Now, we are able to handle almost all the work(create/drop table, loading(insert
 * Data insert/update/delete using HiveQL(DML).
 * Query for phoenix table or join query for phoenix tables or join query for phoenix table and hive table. 
 * Applying predicate push down including salting table.
-1. Range scan available based row-key condition.
-2. Not Retrieving unmatching data by applying predicate push down on column condition also.
-3. Equal, not equal, equal or greater than, less than, equal or less than, between, not between, in, not in, is null, is not null operation support on predicate push down.
+>1. Range scan available based row-key condition.
+>2. Not Retrieving unmatching data by applying predicate push down on column condition also.
+>3. Equal, not equal, equal or greater than, less than, equal or less than, between, not between, in, not in, is null, is not null operation support on predicate push down.
 * Support mr and tez mode
 * Support join between multi clusters
 
 ### Limitations
 * Required modifying source of hive-ql package.
-1. org.apache.hadoop.hive.ql.io.HiveInputFormat Class : 
-	In certain case join query is abnormal processed. because left hand side table's read column name is missing.
-	Most will be fine if you don't modify.
-2. org.apache.hadoop.hive.ql.plan.TableScanDesc Class : 
-	Changes in accordance with Hive-11609 patch.
-	It must be modified.
-3. org.apache.hadoop.hive.ql.exec.Utilities Class : 
-	Needed to control the number of reducers when hive.execution.engine is mr.
-	If you do not modify, then reducer number is always one.
-4. org.apache.hadoop.hive.ql.optimizer.SetReducerParallelism Class : 
-	Needed to control the number of reducers when hive.execution.engine is tez only single-table query.
-	If you do not modify, then reducer number is always one.
-5. org.apache.hadoop.hive.ql.io.RecordIdentifier Class : 
-	Needed to use update/delete statement on transactional table.
-	If you don't modify, then you must give up update/delete statement. But insert statement still possible.
+>1. org.apache.hadoop.hive.ql.io.HiveInputFormat Class : 
+>>	In certain case join query is abnormal processed. because left hand side table's read column name is missing.
+>>	Most will be fine if you don't modify.
+>2. org.apache.hadoop.hive.ql.plan.TableScanDesc Class : 
+>>	Changes in accordance with Hive-11609 patch.
+>>	It must be modified.
+>3. org.apache.hadoop.hive.ql.exec.Utilities Class : 
+>>	Needed to control the number of reducers when hive.execution.engine is mr.
+>>	If you do not modify, then reducer number is always one.
+>4. org.apache.hadoop.hive.ql.optimizer.SetReducerParallelism Class : 
+>>	Needed to control the number of reducers when hive.execution.engine is tez only single-table query.
+>>	If you do not modify, then reducer number is always one.
+>5. org.apache.hadoop.hive.ql.io.RecordIdentifier Class : 
+>>	Needed to use update/delete statement on transactional table.
+>>	If you don't modify, then you must give up update/delete statement. But insert statement still possible.
 * Required modifying source of phoenix-core package.
-1. org.apache.phoenix.execute.MutationState Class : 
-	Optional. But if you want performance burst on insert/update statement. Modify it.
-2. Let's ignore then time zone issue.
+>. org.apache.phoenix.execute.MutationState Class : 
+>>	Optional. But if you want performance burst on insert/update statement. Modify it.
+>. Let's ignore then time zone issue.
 
 ### Usage
 ============
