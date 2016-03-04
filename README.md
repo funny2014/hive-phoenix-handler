@@ -173,7 +173,7 @@ The rest properties are same described above.
 You create transactional table for use update/delete sql. In case of insert statement doen't matter. And transaction table can be created external table or not external table.
 The object of transactional table is only for use update/delete statement.
 ```
-create external table inv
+create external table inventory
 (
   inv_date_sk int,
   inv_item_sk int,
@@ -187,7 +187,39 @@ TBLPROPERTIES (
 ```
 If you use update/delete statement on non-transactional table. NPE will be occurred.
 
+#### Load Data
+To load data to phoenix table through hive, use insert statement. Be careful. Exception occurred if you use function in insert ~ values statement.
+```
+FAILED: SemanticException [Error 10293]: Unable to create temp file for insert values Expression of type TOK_FUNCTION not supported in insert/values
+```
+Therefore only constant value is used in insert statement.
+```
+insert into table inv values (1, 2, 3, 4);
+```
+If you want to use function then you have to use insert ~ select statement.
+```
+insert into table inventory select 1, cast('2' as int), cast(rand() * 100 as int), 4 from dual;
+```
+Dual table is any table that you must create.
+```
+create table dual (value string);
+insert into table dual values ('1');
+```
+Storing one data is no fun. Phoenix also has bulk loading capabilities but hive-phoenix-handler supports more interesting things that filtering or aggregation data.
+If you have CSV/TSV files. then you can create external table in hive. Now you can insert all or specific data to phoenix table using select statement of hive. 
+```
+insert into table inventory
+select * from ext_inv;
+```
+```
+insert into table inventory
+select * from ext_inv where inv_quantity_on_hand > 1000;
+```
+```
+insert into table inventory
+select inv_date_sk, min(inv_item_sk), max(inv_warehouse_sk), avg(inv_quantity_on_hand) from inventory group by inv_date_sk;
+```
+
 ### Compile
-============
 To compile the project 
 mvn package
