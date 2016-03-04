@@ -1,0 +1,140 @@
+/**
+ * 
+ */
+package org.apache.phoenix.hive.objectinspector;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.serde2.lazy.LazySerDeParameters;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.LazyObjectInspectorFactory;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.LazySimpleStructObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory.ObjectInspectorOptions;
+import org.apache.hadoop.hive.serde2.typeinfo.ListTypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.StructTypeInfo;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
+
+/**
+ * @author 주정민
+ *
+ */
+public class PhoenixObjectInspectorFactory {
+
+	private static final Log LOG = LogFactory.getLog(PhoenixObjectInspectorFactory.class);
+	
+	private PhoenixObjectInspectorFactory() {
+
+	}
+
+	public static LazySimpleStructObjectInspector createStructObjectInspector(TypeInfo type,
+			LazySerDeParameters serdeParams) {
+		StructTypeInfo structTypeInfo = (StructTypeInfo) type;
+		List<String> fieldNames = structTypeInfo.getAllStructFieldNames();
+		List<TypeInfo> fieldTypeInfos = structTypeInfo.getAllStructFieldTypeInfos();
+		List<ObjectInspector> fieldObjectInspectors = new ArrayList<ObjectInspector>(fieldTypeInfos.size());
+
+		for (int i = 0; i < fieldTypeInfos.size(); i++) {
+			fieldObjectInspectors.add(createObjectInspector(fieldTypeInfos.get(i), serdeParams));
+		}
+
+		 return LazyObjectInspectorFactory.getLazySimpleStructObjectInspector(
+			 fieldNames, fieldObjectInspectors, null,
+			 serdeParams.getSeparators()[1],
+			 serdeParams, ObjectInspectorOptions.JAVA);
+
+//		return ObjectInspectorFactory.getStandardStructObjectInspector(fieldNames, fieldObjectInspectors);
+	}
+
+	public static ObjectInspector createObjectInspector(TypeInfo type, LazySerDeParameters serdeParams) {
+		ObjectInspector oi = null;
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("<<<<<<<<<< type : " + type + " >>>>>>>>>>");
+		}
+		
+		switch (type.getCategory()) {
+			case PRIMITIVE:
+				switch (((PrimitiveTypeInfo) type).getPrimitiveCategory()) {
+					case BOOLEAN:
+						oi = new PhoenixBooleanObjectInspector();
+						break;
+					case BYTE:
+						oi = new PhoenixByteObjectInspector();
+						break;
+					case SHORT:
+						oi = new PhoenixShortObjectInspector();
+						break;
+					case INT:
+						oi = new PhoenixIntObjectInspector();
+						break;
+					case LONG:
+						oi = new PhoenixLongObjectInspector();
+						break;
+					case FLOAT:
+						oi = new PhoenixFloatObjectInspector();
+						break;
+					case DOUBLE:
+						oi = new PhoenixDoubleObjectInspector();
+						break;
+					case VARCHAR:
+						// same string
+					case STRING:
+						oi = new PhoenixStringObjectInspector(serdeParams.isEscaped(), serdeParams.getEscapeChar());
+						break;
+					case CHAR:
+						oi = new PhoenixCharObjectInspector();
+						break;
+	//					// TODO 기존 Hive의 ObjectInspector를 사용하지 않으면 지원하지 않음.
+	//					throw new RuntimeException("<<<<<<<<<< Hive internal error. not supported data type. >>>>>>>>>>");
+	//					// oi = new LazyHiveCharObjectInspector((CharTypeInfo)typeInfo,
+	//					// serdeParams.isEscaped(), serdeParams.getEscapeChar());
+	//					// break;
+	//				case VARCHAR:
+	//					// TODO 기존 Hive의 ObjectInspector를 사용하지 않으면 지원하지 않음.
+	//					throw new RuntimeException("<<<<<<<<<< Hive internal error. not supported data type. >>>>>>>>>>");
+	//					// oi = new
+	//					// LazyHiveVarcharObjectInspector((VarcharTypeInfo)typeInfo,
+	//					// serdeParams.isEscaped(), serdeParams.getEscapeChar());
+	//					// break;
+					case DATE:
+						oi = new PhoenixDateObjectInspector();
+						break;
+					case TIMESTAMP:
+						oi = new PhoenixTimestampObjectInspector();
+						break;
+					case DECIMAL:
+						oi = new PhoenixDecimalObjectInspector();
+						break;
+					case BINARY:
+						oi = new PhoenixBinaryObjectInspector();
+						break;
+					default:
+						throw new RuntimeException("<<<<<<<<<< Hive internal error. not supported data type : " + type + " >>>>>>>>>>");
+				}
+				
+				break;
+			case LIST:
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("<<<<<<<<<< list type start >>>>>>>>>>");
+				}
+				
+				ObjectInspector listElementObjectInspector = createObjectInspector(((ListTypeInfo) type).getListElementTypeInfo(), serdeParams);
+				
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("<<<<<<<<<< list type end >>>>>>>>>>");
+				}
+				
+				oi = new PhoenixListObjectInspector(listElementObjectInspector, serdeParams.getSeparators()[0], serdeParams);
+				
+				break;
+			default:
+				throw new RuntimeException("<<<<<<<<<< Hive internal error. not supported data type : " + type + " >>>>>>>>>>");
+		}
+		
+		return oi;
+	}
+}

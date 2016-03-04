@@ -1,0 +1,12 @@
+#general java
+*.class
+
+#backup
+*.org
+
+#test configuration file
+src/main/resources/*.properties
+src/main/resources/*.xml
+
+#maven
+target/
