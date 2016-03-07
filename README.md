@@ -219,13 +219,16 @@ select * from ext_inv where inv_quantity_on_hand > 1000;
 insert into table inventory
 select inv_date_sk, min(inv_item_sk), max(inv_warehouse_sk), avg(inv_quantity_on_hand) from inventory group by inv_date_sk;
 ```
-parameters on performance
+parameters on performance.
+
 Parameters | Default Value | Description
 ------------ | ------------- | -------------
 phoenix.upsert.batch.size | 1000 | Batch size for upsert.
 [phoenix-table-name].disable.wal | false | It temporarily modify table attribute to `DISABLE_WAL = true`. And skip validation for performance boost.
 [phoenix-table-name].auto.flush | false | When WAL is disabled and if this value is true. Then flush memstore to hfile.
 
+#### Query Data
+You can use HiveQL for querying data on phoenix table. A single table query as fast as Phoenix CLI when `hive.fetch.task.conversion=more` and `hive.exec.parallel=true`.
 
 ### Compile
 To compile the project 
