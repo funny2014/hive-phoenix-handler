@@ -230,6 +230,38 @@ phoenix.upsert.batch.size | 1000 | Batch size for upsert.
 #### Query Data
 You can use HiveQL for querying data on phoenix table. A single table query as fast as Phoenix CLI when `hive.fetch.task.conversion=more` and `hive.exec.parallel=true`.
 
+Parameters | Default Value | Description
+------------ | ------------- | -------------
+hbase.scan.cache | 100 | Read row size for an unit request.
+hbase.scan.cacheblock | false | Whether or not cache block.
+split.by.stats | false | If true, Many mapper is loaded using stat table of phoenix. One guide post is one mapper.
+[hive-table-name].reducer.count | 1 | Number of reducer. In tez mode is affected only single-table query.
+[phoenix-table-name].query.hint | | Hint for phoenix query. NO_INDEX, ... Reference phoenix documentation.
+
+Query 82 on TPCDS 100G
+```
+select
+  i.i_item_id
+  ,i.i_item_desc
+  ,i.i_current_price
+from 
+  p_date_dim d, p_item i, p_store_sales s, p_inventory inv
+where 
+  i.i_current_price between 44 and 44 + 30
+  and i.i_manufact_id in (62,48,16,37)
+  and inv.key.inv_item_sk = i.i_item_sk
+  and d.d_date_sk = inv.key.inv_date_sk
+  and d.d_date > TO_DATE('1998-06-13')
+  and d.d_date < date_add(TO_DATE('1998-06-13'), 60)
+  and inv.inv_quantity_on_hand between 100 and 500
+  and s.key.ss_item_sk = i.i_item_sk
+group by 
+  i.i_item_id,i.i_item_desc,i.i_current_price
+order by 
+  i.i_item_id
+```
+This query does not run in Phoenix. But hive-phoenix-handler can do with reasonable performance.
+
 ### Compile
 To compile the project 
 mvn package
