@@ -38,7 +38,7 @@ Now, we are able to handle almost all the work(create/drop table, loading(insert
   >	If you don't modify, then you must give up update/delete statement. But insert statement still possible.
 * Required modifying source of phoenix-core package.
   * org.apache.phoenix.execute.MutationState Class : 
-  >	Optional. But if you want performance burst on insert/update statement. Modify it.
+  >	Optional. But if you want performance boost on insert/update statement. Modify it.
   * Let's ignore then time zone issue.
 
 ### Usage
@@ -219,6 +219,13 @@ select * from ext_inv where inv_quantity_on_hand > 1000;
 insert into table inventory
 select inv_date_sk, min(inv_item_sk), max(inv_warehouse_sk), avg(inv_quantity_on_hand) from inventory group by inv_date_sk;
 ```
+parameters on performance
+Parameters | Default Value | Description
+------------ | ------------- | -------------
+phoenix.upsert.batch.size | 1000 | Batch size for upsert.
+[phoenix-table-name].disable.wal | false | It temporarily modify table attribute to `DISABLE_WAL = true`. And skip validation for performance boost.
+[phoenix-table-name].auto.flush | false | When WAL is disabled and if this value is true. Then flush memstore to hfile.
+
 
 ### Compile
 To compile the project 
