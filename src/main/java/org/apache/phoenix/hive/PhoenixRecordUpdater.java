@@ -31,7 +31,7 @@ import org.apache.phoenix.schema.MetaDataClient;
 import org.apache.phoenix.util.QueryUtil;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixRecordUpdater implements RecordUpdater {
@@ -277,7 +277,7 @@ public class PhoenixRecordUpdater implements RecordUpdater {
 	        		}
 				}
 
-        		// 2016-01-25 주정민 추가 - [테이블명].auto.flush=true 면 flush 처리한다.
+        		// 2016-01-25 Added by JeongMin Ju - flush when [table-name].auto.flush is true.
         		String autoFlushConfigName = tableName.toLowerCase() + PhoenixStorageHandlerConstants.AUTO_FLUSH;
                 boolean autoFlush = config.getBoolean(autoFlushConfigName, false);
                 if (autoFlush) {

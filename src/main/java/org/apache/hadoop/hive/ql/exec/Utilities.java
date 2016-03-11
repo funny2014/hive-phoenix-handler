@@ -2602,7 +2602,7 @@ public final class Utilities {
                   }
                   resultMap.put(pathStr, new ContentSummary(total, -1, -1));
                 } else {
-                	// 2015-01-07 주정민 수정 : else 문으로
+                	// 2015-01-07 Modified by JeongMin Ju : Enclose else statement
 	                // todo: should nullify summary for non-native tables,
 	                // not to be selected as a mapjoin target
 	                FileSystem fs = p.getFileSystem(myConf);

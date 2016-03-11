@@ -53,7 +53,7 @@ import com.google.common.collect.Lists;
 /**
  * analyzePredicate 메서드 수정을 위해 org.apache.hadoop.hive.ql.index.IndexPredicateAnalyzer 클래스 복사하였음.
  * 
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class IndexPredicateAnalyzer {
@@ -330,17 +330,17 @@ public class IndexPredicateAnalyzer {
 
 		GenericUDF genericUDF = expr.getGenericUDF();
 		if (!(genericUDF instanceof GenericUDFBaseCompare)) {
-			// 2015-10-22 주정민 추가 : Between/In Operator 처리
+			// 2015-10-22 Added by JeongMin Ju : Processing Between/In Operator
 			if (genericUDF instanceof GenericUDFBetween) {
-				// not between의 경우 nodeOutputs의 첫번째 Element 값이 true로 넘어옴. 그렇지 않으면 false
+				// In case of not between, The value of first element of nodeOutputs is true. otherwise false.
 				processingBetweenOperator(expr, searchConditions, nodeOutputs);
 				return expr;
 			} else if (genericUDF instanceof GenericUDFIn) {
-				// not in 연산자의 경우 not 연산자의 자식으로 in 연산자가 존재
+				// In case of not in operator, in operator exist as child of not operator.
 				processingInOperator(expr, searchConditions, false, nodeOutputs);
 				return expr;
 			} else if (genericUDF instanceof GenericUDFOPNot && ((ExprNodeGenericFuncDesc)expr.getChildren().get(0)).getGenericUDF() instanceof GenericUDFIn) {
-				// not in 연산자의 경우 not 연산자의 자식으로 in 연산자가 존재
+				// In case of not in operator, in operator exist as child of not operator.
 				processingInOperator((ExprNodeGenericFuncDesc)expr.getChildren().get(0), searchConditions, true, ((ExprNodeGenericFuncDesc)nodeOutputs[0]).getChildren().toArray());
 				return expr;
 			} else if (genericUDF instanceof GenericUDFOPNull) {
@@ -465,13 +465,13 @@ public class IndexPredicateAnalyzer {
 		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPLessThan");
 		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPGreaterThan");
 
-		// 2015-10-23 주정민 추가
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNotEqual");		// != 포함
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFBetween");		// (Not) Between 포함
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFIn");		// (Not) In 포함
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFIn");		// In 포함
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNull");		// Null 포함
-		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNotNull");		// Not Null 포함
+		// 2015-10-23 Added by JeongMin Ju
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNotEqual");		// apply !=
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFBetween");		// apply (Not) Between
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFIn");		// apply (Not) In
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFIn");		// apply In
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNull");		// apply Null
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPNotNull");		// apply Not Null
 		
 		return analyzer;
 	}

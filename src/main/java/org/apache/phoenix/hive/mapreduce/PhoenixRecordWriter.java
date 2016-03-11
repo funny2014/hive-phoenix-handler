@@ -39,7 +39,7 @@ import org.apache.phoenix.util.QueryUtil;
  * 
  * WARNING : WAL disable 관련 정상적으로 작동하지 않을 가능성이 있음. Mapper나 Tez Task가 Multi-Process로 동작하기 때문에 한 Mapper가 disabled 처리하고
  * 			Statement를 Update하기 전에 다른 Mapper가 enabled 처리하게 되면 WAL이 작동하게 됨.
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixRecordWriter<T extends DBWritable>  implements RecordWriter<NullWritable, T>, org.apache.hadoop.hive.ql.exec.FileSinkOperator.RecordWriter, RecordUpdater {
@@ -181,7 +181,7 @@ public class PhoenixRecordWriter<T extends DBWritable>  implements RecordWriter<
 	        		}
 				}
 
-        		// 2016-01-25 주정민 추가 - [테이블명].auto.flush=true 면 flush 처리한다.
+        		// 2016-01-25 Added by JeongMin Ju - flush if [table-name].auto.flush is true.
         		String autoFlushConfigName = tableName.toLowerCase() + PhoenixStorageHandlerConstants.AUTO_FLUSH;
                 boolean autoFlush = config.getBoolean(autoFlushConfigName, false);
                 if (autoFlush) {

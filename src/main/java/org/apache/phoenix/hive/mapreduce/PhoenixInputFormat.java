@@ -55,7 +55,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 @SuppressWarnings({ "deprecation", "rawtypes" })

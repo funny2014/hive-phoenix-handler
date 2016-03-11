@@ -6,7 +6,7 @@ package org.apache.phoenix.hive;
 import org.apache.hadoop.hive.ql.io.RecordIdentifier;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixRowKey extends RecordIdentifier {

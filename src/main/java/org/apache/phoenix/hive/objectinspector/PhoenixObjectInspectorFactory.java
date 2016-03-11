@@ -19,7 +19,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.StructTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixObjectInspectorFactory {

@@ -10,7 +10,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.TimestampObjectIn
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixTimestampObjectInspector extends AbstractPhoenixObjectInspector<TimestampWritable> implements TimestampObjectInspector {

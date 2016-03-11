@@ -34,7 +34,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixUtil {

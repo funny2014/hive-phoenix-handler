@@ -39,7 +39,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 @SuppressWarnings("rawtypes")

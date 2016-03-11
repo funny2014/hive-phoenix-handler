@@ -28,7 +28,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixQueryBuilder {
@@ -108,7 +108,7 @@ public class PhoenixQueryBuilder {
 			selectColumns = "*";
 		} else {
 			if (PhoenixStorageHandlerUtil.isTransactionalTable(jobConf)) {
-				// 2016-01-27 주정민 추가 : 아마도 delete 실행때만
+				// 2016-01-27 Added by JeongMin Ju : Maybe only delete execution.
 				List<String> pkColumnList = PhoenixUtil.getPrimaryKeyColumnList(jobConf, tableName);
 				StringBuilder pkColumns = new StringBuilder();
 				

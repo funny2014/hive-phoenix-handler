@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.phoenix.hive.ql.index.IndexPredicateAnalyzer.FieldValidator;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PredicateAnalyzerFactory {

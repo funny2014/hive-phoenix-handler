@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
 
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixStorageHandlerUtil {
@@ -95,7 +95,7 @@ public class PhoenixStorageHandlerUtil {
 	public static String[] getConstantValues(IndexSearchCondition condition, String comparisonOp) {
 		String[] constantValues = null;
 		
-		if (comparisonOp.endsWith("UDFOPEqual") || comparisonOp.endsWith("UDFOPNotEqual")) {		// key = 1  2016-02-29 주정민 수정 : not equal 추가
+		if (comparisonOp.endsWith("UDFOPEqual") || comparisonOp.endsWith("UDFOPNotEqual")) {		// key = 1  2016-02-29 Added by JeongMin Ju : Adding not equal
 			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
 		} else if (comparisonOp.endsWith("UDFOPEqualOrGreaterThan")) {	// key >= 1
 			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};

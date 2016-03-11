@@ -10,7 +10,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.DateObjectInspect
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixDateObjectInspector extends AbstractPhoenixObjectInspector<DateWritable> implements DateObjectInspector {

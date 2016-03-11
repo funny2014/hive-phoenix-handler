@@ -34,7 +34,7 @@ public class IndexSearchCondition {
 
 	private String[] fields;
 
-	// 2015-10-23 주정민 추가 : (Not) Between/(Not) In Operator 지원
+	// 2015-10-23 Added by JeongMin Ju : Support (Not) Between/(Not) In Operator
 	//////////////////////////////////////////////////////////////////////////////
 	private ExprNodeConstantDesc[] multiConstants;
 	private boolean isNot;

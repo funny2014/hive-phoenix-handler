@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixInputSplit extends FileSplit implements InputSplit {
@@ -31,7 +31,7 @@ public class PhoenixInputSplit extends FileSplit implements InputSplit {
 
 	private long regionSize;
 	
-	// 2015-11-27 주정민 추가 : Split 결정시 만들어진 쿼리가 Mapper에서 RecordReader 생성시에 jobConf를 통해 넘어가지 않아 Split에 설정하여 넘김.
+	// 2015-11-27 Added by JeongMin Ju : I will pass query put in split because it is not delivered in jobConf. 
 	private String query;
 	
 	public PhoenixInputSplit() {

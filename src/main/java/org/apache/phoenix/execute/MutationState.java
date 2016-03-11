@@ -360,7 +360,7 @@ public class MutationState implements SQLCloseable {
         MetaDataClient client = new MetaDataClient(connection);
         long[] timeStamps = new long[this.mutations.size()];
         
-        // 2016-01-20 주정민 수정 : Batch 처리하는 경우 테이블 메타 조회를 건너뛰도록 한다.
+        // 2016-01-20 Modify by JeongMin Ju : Skip validation on table meta when batch processing.
         String batchMode = connection.getClientInfo("batch.mode");
         if (logger.isDebugEnabled()) {
         	logger.debug("batch.mode : " + batchMode);

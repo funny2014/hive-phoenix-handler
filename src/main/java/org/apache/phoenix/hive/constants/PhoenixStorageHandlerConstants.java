@@ -10,7 +10,7 @@ import org.apache.hadoop.io.IntWritable;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixStorageHandlerConstants {

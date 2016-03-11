@@ -8,7 +8,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.BytesWritable;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixBinaryObjectInspector extends AbstractPhoenixObjectInspector<BytesWritable> implements BinaryObjectInspector {

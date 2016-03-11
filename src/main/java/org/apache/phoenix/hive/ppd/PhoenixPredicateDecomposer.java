@@ -16,7 +16,7 @@ import org.apache.phoenix.hive.ql.index.IndexSearchCondition;
 import org.apache.phoenix.hive.ql.index.PredicateAnalyzerFactory;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixPredicateDecomposer {

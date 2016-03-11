@@ -11,7 +11,7 @@ import org.apache.hadoop.hive.serde2.StructObject;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixRow implements StructObject {

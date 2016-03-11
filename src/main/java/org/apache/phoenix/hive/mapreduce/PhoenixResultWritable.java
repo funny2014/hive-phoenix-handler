@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixResultWritable implements Writable, DBWritable, Configurable {
@@ -149,7 +149,7 @@ public class PhoenixResultWritable implements Writable, DBWritable, Configurable
             rowMap.put(rsmd.getColumnName(i + 1), value);
         }
         
-        // 2016-01-27 주정민 추가 : row__id 컬럼을 추가한다.
+        // 2016-01-27 Added by JeongMin Ju : Adding row__id column.
         if (isTransactional) {
         	rowKeyMap.clear();
         	

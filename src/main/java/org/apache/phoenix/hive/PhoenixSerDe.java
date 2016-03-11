@@ -30,7 +30,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixSerDe extends AbstractSerDe {

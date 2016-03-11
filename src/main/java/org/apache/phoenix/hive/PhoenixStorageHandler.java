@@ -35,7 +35,7 @@ import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 import org.apache.phoenix.mapreduce.util.PhoenixConfigurationUtil;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 @SuppressWarnings("deprecation")

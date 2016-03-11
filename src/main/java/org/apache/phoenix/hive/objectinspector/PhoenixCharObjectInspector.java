@@ -9,7 +9,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveCharObjectIns
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixCharObjectInspector extends AbstractPhoenixObjectInspector<HiveCharWritable> implements HiveCharObjectInspector {

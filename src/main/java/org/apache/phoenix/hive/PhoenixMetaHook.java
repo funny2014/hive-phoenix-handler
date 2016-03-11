@@ -26,7 +26,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixMetaHook implements HiveMetaHook {

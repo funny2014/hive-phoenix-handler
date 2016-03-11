@@ -24,7 +24,7 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixOutputFormat<T extends DBWritable> implements OutputFormat<NullWritable,T>, AcidOutputFormat<NullWritable, T> {

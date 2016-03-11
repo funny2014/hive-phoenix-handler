@@ -31,7 +31,7 @@ import org.apache.phoenix.hive.util.PhoenixUtil;
 import org.apache.phoenix.util.ColumnInfo;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixSerializer {

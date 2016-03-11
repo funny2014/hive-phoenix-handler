@@ -40,7 +40,7 @@ public class TableScanDesc extends AbstractOperatorDesc {
   private static final long serialVersionUID = 1L;
 
   static {
-	//2015-10-14 주정민 : Hive-11609 패치 적용
+	//2015-10-14 JenogMin Ju : Apply Hive-11609 Patch
 //    PTFUtils.makeTransient(TableScanDesc.class, "filterObject", "referencedColumns", "tableMetadata");
     PTFUtils.makeTransient(TableScanDesc.class, "referencedColumns", "tableMetadata");
   }
@@ -74,7 +74,7 @@ public class TableScanDesc extends AbstractOperatorDesc {
 
   private ExprNodeGenericFuncDesc filterExpr;
   
-  //2015-10-02 주정민 : Hive-11609 패치 적용
+  //2015-10-02 JenogMin Ju : Apply Hive-11609 Patch
   private Serializable filterObject;
 //  private transient Serializable filterObject;
 

@@ -13,7 +13,7 @@ import org.apache.phoenix.schema.types.PhoenixArray;
 import com.google.common.collect.Lists;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixListObjectInspector implements ListObjectInspector {

@@ -433,11 +433,11 @@ public class HiveInputFormat<K extends WritableComparable, V extends Writable>
   }
 
   	/**
-  	 * 읽기 대상 컬럼을 설정한다.
-  	 * select t1.c1, t1.c2, ... from t1, t2 where t1.c1 = t2.c1 쿼리의 경우 t1 테이블에 대한 c1, c2가 InputFormat 쪽으로 넘어가지 않아
-  	 * 강제로 설정함.
-  	 * 
-  	 * @author 주정민
+  	 * Set read columns.
+  	 * In case of select query(select t1.c1, t1.c2, ... from t1, t2 where t1.c1 = t2.c1), it can not read target columns at InputFormat class because columns of t1 table are not set.
+  	 * therefore, set to force read columns.
+	 *
+  	 * @author JeongMin Ju
 	 * @param jobConf
 	 * @param tableScan
 	 * @create-date 2016-01-15
@@ -458,7 +458,7 @@ public class HiveInputFormat<K extends WritableComparable, V extends Writable>
       return;
     }
     
-    // 2015-10-27 주정민 추가
+    // 2015-10-27 Added by JeongMin Ju
     //////////////////////////////////////////////////////////////////////
     setReadColumns(jobConf, tableScan);
     //////////////////////////////////////////////////////////////////////

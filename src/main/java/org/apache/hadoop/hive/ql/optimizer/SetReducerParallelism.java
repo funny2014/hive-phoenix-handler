@@ -62,7 +62,7 @@ public class SetReducerParallelism implements NodeProcessor {
     long bytesPerReducer = context.conf.getLongVar(HiveConf.ConfVars.BYTESPERREDUCER);
     int maxReducers = context.conf.getIntVar(HiveConf.ConfVars.MAXREDUCERS);
     
-    // 2015-01-13 주정민 추가 : Tez 모드일때 각 테이블별 리듀서 개수 설정
+    // 2015-01-13 Added by JeongMin Ju : Set reduce number by table when tez mode.
     ////////////////////////////////////////////////////////////////////////////////////////////
     int constantReducers = 0;
     try {

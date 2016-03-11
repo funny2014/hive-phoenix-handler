@@ -12,7 +12,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveDecimalObject
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixDecimalObjectInspector extends AbstractPhoenixObjectInspector<HiveDecimalWritable> implements HiveDecimalObjectInspector {

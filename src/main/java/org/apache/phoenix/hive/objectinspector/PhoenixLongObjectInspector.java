@@ -8,7 +8,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.LongWritable;
 
 /**
- * @author 주정민
+ * @author JeongMin Ju
  *
  */
 public class PhoenixLongObjectInspector extends AbstractPhoenixObjectInspector<LongWritable> implements LongObjectInspector {
