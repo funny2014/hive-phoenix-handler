@@ -20,8 +20,8 @@ public class PhoenixPredicateDecomposerManager {
 
 	private static final Log LOG = LogFactory.getLog(PhoenixPredicateDecomposerManager.class);
 	
-	// Where 조건절이 없는 경우 StorageHandler.decomposePredicate 메서드가 호출되지 않아 PhoenixPredicateDecomposer가 생성되지 않는다. 
-	// 때문에 Self-Join인 경우 InputFormat.getSplits 에서 잘못된 처리가 발생될 소지가 있다. 
+	// In case of without where clause, PhoenixPredicateDecomposer is not created because it's not called method of StorageHandler.decomposePredicate.
+	// Therefore Self-Join is likely to wrong InputFormat.getSplits.
 	private static final Map<String, List<PhoenixPredicateDecomposer>> PREDICATE_DECOMPOSER_MAP = Maps.newConcurrentMap();
 	
 	public static PhoenixPredicateDecomposer createPredicateDecomposer(String predicateKey, List<String> columnNameList) {

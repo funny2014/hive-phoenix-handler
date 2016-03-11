@@ -44,15 +44,15 @@ public class PhoenixMetaHook implements HiveMetaHook {
 			String tableName = PhoenixStorageHandlerUtil.getTargetTableName(table);
 			
 			if (TableType.EXTERNAL_TABLE.name().equals(tableType)) {
-				// Phoenix 테이블이 존재하는지 검사
+				// Check whether phoenix table exists.
 				if (!PhoenixUtil.existTable(conn, tableName)) {
-					// Phoenix 테이블 없으면 에러
+					// Error if phoenix table not exist.
 					throw new MetaException("<<<<<<<<<< " + tableName + " phoenix table not exist. >>>>>>>>>>");
 				}
 			} else if (TableType.MANAGED_TABLE.name().equals(tableType)) {
-				// Phoenix 테이블이 존재하는지 검사
+				// Check whether phoenix table exists.
 				if (PhoenixUtil.existTable(conn, tableName)) {
-					// 이미 Phoenix 테이블 존재하면 에러
+					// Error if phoenix table already exist.
 					throw new MetaException("<<<<<<<<<< " + tableName + " phoenix table already exist. >>>>>>>>>>");
 				}
 				
@@ -89,9 +89,9 @@ public class PhoenixMetaHook implements HiveMetaHook {
 			
 			String rowKeyName = getRowKeyMapping(fieldName, phoenixRowKeyList);
 			if (rowKeyName != null) {
-				// 로우키
+				// In case of RowKey
 				if ("binary".equals(columnType)) {
-					// Phoenix의 경우 binary 타입 지정시 최대 길이를 지정하여야 함. 컬럼 맵핑에서 정보를 획득 ex) phoenix.rowkeys = "r1, r2(100), ..."
+					// Phoenix must define max length of binary when type definition. Obtaining information from the column mapping. ex) phoenix.rowkeys = "r1, r2(100), ..."
 					List<String> tokenList = Lists.newArrayList(Splitter.on(CharMatcher.is('(').or(CharMatcher.is(')'))).trimResults().split(rowKeyName));
 					columnType = columnType + "(" + tokenList.get(1) + ")";
 					rowKeyName = tokenList.get(0);
@@ -100,17 +100,17 @@ public class PhoenixMetaHook implements HiveMetaHook {
 				ddl.append("  ").append(rowKeyName).append(" ").append(columnType).append(" not null,\n");
 				realRowKeys.append(rowKeyName).append(",");
 			} else {
-				// 컬럼
+				// In case of Column
 				String columnName = columnMappingMap.get(fieldName);
 				
 				if (columnName == null) {
-					// 필드 정의를 사용
+					// Use field definition.
 					columnName = fieldName;
 //					throw new MetaException("<<<<<<<<<< " + fieldName + " column mapping not exist. >>>>>>>>>>");
 				}
 				
 				if ("binary".equals(columnType)) {
-					// Phoenix의 경우 binary 타입 지정시 최대 길이를 지정하여야 함. 컬럼 맵핑에서 정보를 획득 ex) phoenix.column.mapping=c1:c1(100)
+					// Phoenix must define max length of binary when type definition. Obtaining information from the column mapping. ex) phoenix.column.mapping=c1:c1(100)
 					List<String> tokenList = Lists.newArrayList(Splitter.on(CharMatcher.is('(').or(CharMatcher.is(')'))).trimResults().split(columnName));
 					columnType = columnType + "(" + tokenList.get(1) + ")";
 					columnName = tokenList.get(0);
@@ -210,7 +210,7 @@ public class PhoenixMetaHook implements HiveMetaHook {
 			String tableName = PhoenixStorageHandlerUtil.getTargetTableName(table);
 			
 			if (TableType.MANAGED_TABLE.name().equals(tableType)) {
-				// Phoenix 테이블이 존재하면 Drop
+				// Drop if phoenix table exist.
 				if (PhoenixUtil.existTable(conn, tableName)) {
 					PhoenixUtil.dropTable(conn, tableName);
 				}

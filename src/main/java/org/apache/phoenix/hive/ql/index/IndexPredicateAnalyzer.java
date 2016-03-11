@@ -51,7 +51,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import com.google.common.collect.Lists;
 
 /**
- * analyzePredicate 메서드 수정을 위해 org.apache.hadoop.hive.ql.index.IndexPredicateAnalyzer 클래스 복사하였음.
+ * I copied org.apache.hadoop.hive.ql.index.IndexPredicateAnalyzer class for modifying method of analyzePredicate.
  * 
  * @author JeongMin Ju
  *
@@ -203,7 +203,7 @@ public class IndexPredicateAnalyzer {
 		String[] fields = null;
 		
 		if (nodeOutputs[1] instanceof ExprNodeFieldDesc) {
-			// rowKey 필드
+			// rowKey field
 			ExprNodeFieldDesc fieldDesc = (ExprNodeFieldDesc)nodeOutputs[1];
 			fields = ExprNodeDescUtils.extractFields(fieldDesc);
 			
@@ -231,13 +231,13 @@ public class IndexPredicateAnalyzer {
 		}
 		
 		if (nodeOutputs[0] instanceof ExprNodeFieldDesc) {
-			// rowKey 필드
+			// rowKey field
 			ExprNodeFieldDesc fieldDesc = (ExprNodeFieldDesc)nodeOutputs[0];
 			fields = ExprNodeDescUtils.extractFields(fieldDesc);
 			
 			ExprNodeDesc[] extracted = ExprNodeDescUtils.extractComparePair((ExprNodeDesc)nodeOutputs[0], (ExprNodeDesc)nodeOutputs[1]);
 			
-			if (extracted == null) {	// TEZ를 위해 추가
+			if (extracted == null) {	// adding for tez
 				return;
 			}
 			
@@ -256,7 +256,7 @@ public class IndexPredicateAnalyzer {
 		ExprNodeConstantDesc[] inConstantDescs = new ExprNodeConstantDesc[nodeOutputs.length - 1];
 		
 		for (int i = 0, limit = inConstantDescs.length; i < limit; i++) {
-			if (!(nodeOutputs[i + 1] instanceof ExprNodeConstantDesc)) {	// TEZ를 위해 추가
+			if (!(nodeOutputs[i + 1] instanceof ExprNodeConstantDesc)) {	// adding for tez
 				return;
 			}
 			
@@ -271,7 +271,7 @@ public class IndexPredicateAnalyzer {
 		String[] fields = null;
 		
 		if (nodeOutputs[0] instanceof ExprNodeFieldDesc) {
-			// rowKey 필드
+			// rowKey field
 			ExprNodeFieldDesc fieldDesc = (ExprNodeFieldDesc)nodeOutputs[0];
 			fields = ExprNodeDescUtils.extractFields(fieldDesc);
 			
@@ -293,7 +293,7 @@ public class IndexPredicateAnalyzer {
 		String[] fields = null;
 		
 		if (nodeOutputs[0] instanceof ExprNodeFieldDesc) {
-			// rowKey 필드
+			// rowKey field
 			ExprNodeFieldDesc fieldDesc = (ExprNodeFieldDesc)nodeOutputs[0];
 			fields = ExprNodeDescUtils.extractFields(fieldDesc);
 			

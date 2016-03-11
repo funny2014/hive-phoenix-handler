@@ -116,7 +116,7 @@ public class PhoenixUtil {
 		try {
 			columnInfoList = PhoenixRuntime.generateColumnInfo(conn, tableName, null);
 		} catch (TableNotFoundException e) {
-			// create table시에 Exception이 발생될 수 있음.
+			// Exception can be occurred when table create.
 			columnInfoList = Collections.emptyList();
 		}
 		

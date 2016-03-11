@@ -127,7 +127,7 @@ public class PhoenixInputFormat<T extends DBWritable> implements InputFormat<Wri
         	LOG.debug("<<<<<<<<<< scanCacheSize : " + scanCacheSize + " >>>>>>>>>>");
 		}
         
-        // Localization 추가
+        // Adding Localization
         HConnection connection = HConnectionManager.createConnection(jobConf);
         RegionLocator regionLocator = connection.getRegionLocator(TableName.valueOf(qplan.getTableRef().getTable().getPhysicalName().toString()));
         RegionSizeCalculator sizeCalculator = new RegionSizeCalculator(regionLocator, connection.getAdmin());

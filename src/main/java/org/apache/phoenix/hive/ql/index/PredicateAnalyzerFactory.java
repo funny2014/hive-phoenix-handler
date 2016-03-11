@@ -14,7 +14,7 @@ import org.apache.phoenix.hive.ql.index.IndexPredicateAnalyzer.FieldValidator;
 public class PredicateAnalyzerFactory {
 
 	public static IndexPredicateAnalyzer createPredicateAnalyzer(List<String> ppdColumnList, FieldValidator fieldValdator) {
-		IndexPredicateAnalyzer analyzer = IndexPredicateAnalyzer.createAnalyzer(false);		// =, <, <=, >, >= 포함
+		IndexPredicateAnalyzer analyzer = IndexPredicateAnalyzer.createAnalyzer(false);		// including =, <, <=, >, >= 
 		
 		for (String columnName : ppdColumnList) {
 			analyzer.allowColumnName(columnName);

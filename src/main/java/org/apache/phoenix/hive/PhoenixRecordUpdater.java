@@ -61,7 +61,7 @@ public class PhoenixRecordUpdater implements RecordUpdater {
         Properties props = new Properties();
         
         try {
-	        // WAL Disable 처리
+        	// Disable WAL
 	        String walConfigName = tableName.toLowerCase() + PhoenixStorageHandlerConstants.DISABLE_WAL;
 	        boolean disableWal = config.getBoolean(walConfigName, false);
 	        if (disableWal) {
@@ -78,7 +78,7 @@ public class PhoenixRecordUpdater implements RecordUpdater {
 	        	metaDataClient = new MetaDataClient((PhoenixConnection)conn);
 	        	
 	        	if (!PhoenixUtil.isDisabledWal(metaDataClient, tableName)) {
-	        		// 테이블이 disable_wal=true가 아니면 alter table문을 실행한다.
+	        		// execute alter tablel statement if disable_wal is not true.
 	        		try {
 	        			PhoenixUtil.alterTableForWalDisable(conn, tableName, true);
 	        		} catch (ConcurrentTableMutationException e) {
@@ -91,7 +91,7 @@ public class PhoenixRecordUpdater implements RecordUpdater {
 	        			LOG.debug("<<<<<<<<<< " + tableName + "s wal disabled. >>>>>>>>>>");
 	        		}
 	        		
-	        		// 종료시 disable_wal 값을 원래 값으로 원복한다.
+	        		// restore original value of disable_wal at the end.
 	        		restoreWalMode = true;
 	        	}
 	        }

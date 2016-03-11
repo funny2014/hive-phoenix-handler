@@ -347,9 +347,9 @@ public class PhoenixQueryBuilder {
 	}
 	
 	/**
-	 * value를 pattern의 특정 부분에 치환한다.
-	 * pattern이 to_date($value$)이고 value가 '2016-01-15'이면 to_date('2016-01-15')를 리턴한다.
-	 * pattern이 cast($value$ as date)이고 value가 '2016-01-15'이면 cast('2016-01-15' as date)를 리턴한다.
+	 * replace value to specific part of pattern.
+	 * if pattern is to_date($value$) and value is '2016-01-15'. then return to_date('2016-01-15').
+	 * if pattern is cast($value$ as date) and value is '2016-01-15'. then return cast('2016-01-15' as date).
 	 */
 	private String applyFunction(String pattern, String value) {
 		if (!value.startsWith(PhoenixStorageHandlerConstants.QUOTATION_MARK)) {
@@ -430,7 +430,7 @@ public class PhoenixQueryBuilder {
 		return whereCondition.toString();
 	}
 	
-	// 타임스탬프 값은 yyyy-MM-dd HH:mm:ss.SSS 형식이라고 가정
+	// Assume timestamp value is yyyy-MM-dd HH:mm:ss.SSS
 	private String applyTimestampFunction(String whereClause, String columnName) {
 		StringBuilder whereCondition = new StringBuilder();
 		for (Iterator<String> iterator = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().split(whereClause).iterator(); iterator.hasNext(); whereCondition.append(PhoenixStorageHandlerConstants.SPACE)) {

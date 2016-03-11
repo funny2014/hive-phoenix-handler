@@ -120,21 +120,21 @@ public class PhoenixSerializer {
 	                    pResultWritable.add(value);
 	                    break;
 	                case LIST:
-//	                	pResultWritable.add(fieldValue);	// TODO Hive에서 insert ... values 문에서 array 지원하지 않음.
+//	                	pResultWritable.add(fieldValue);	// Not support array in insert ... values statement of hive.
 	                	break;
 	                case STRUCT:
 	                	if (dmlType == DmlType.DELETE) {
-	                		// Update/Delete의 경우 첫번째 값은 struct<transactionid:bigint,bucketid:int,rowid:bigint,primaryKey:binary>>
+	                		// When update/delete, First value is struct<transactionid:bigint,bucketid:int,rowid:bigint,primaryKey:binary>>
 	                		List<Object> fieldValueList = ((StandardStructObjectInspector)fieldOI).getStructFieldsDataAsList(fieldValue);
 	                		
-	                		// primaryKey의 binary는 Map으로 변환
+	                		// convert to map from binary of primary key.
 	                		@SuppressWarnings("unchecked")
 							Map<String, Object> primaryKeyMap = (Map<String, Object>) PhoenixStorageHandlerUtil.toMap(((BytesWritable)fieldValueList.get(3)).getBytes());
 	                		for (Object pkValue : primaryKeyMap.values()) {
 	                			pResultWritable.add(pkValue);
 	                		}
 	                		
-	                		// Map<String, String>으로 한 경우
+	                		// In case of Map<String, String>
 //	                		@SuppressWarnings("unchecked")
 //							Map<String, String> primaryKeyMap = Maps.transformValues((Map<String, Text>) fieldValueList.get(3), new Function<Text, String>() {
 //

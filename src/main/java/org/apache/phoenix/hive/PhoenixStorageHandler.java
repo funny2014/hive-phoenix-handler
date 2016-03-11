@@ -68,7 +68,7 @@ public class PhoenixStorageHandler extends DefaultStorageHandler implements Hive
         	LOG.debug("<<<<<<<<<< table : " + tableDesc.getTableName() + " >>>>>>>>>>" );
         }
         
-		// in/out 작업 임을 SerDe에 알려 initialize를 효율화한다.
+        // initialization efficiency. Inform to SerDe about in/out work.
 		tableDesc.getProperties().setProperty(PhoenixStorageHandlerConstants.IN_OUT_WORK, PhoenixStorageHandlerConstants.IN_WORK);
     }
 
@@ -80,7 +80,7 @@ public class PhoenixStorageHandler extends DefaultStorageHandler implements Hive
         	LOG.debug("<<<<<<<<<< table : " + tableDesc.getTableName() + " >>>>>>>>>>" );
         }
         
-		// in/out 작업 임을 SerDe에 알려 initialize를 효율화한다.
+        // initialization efficiency. Inform to SerDe about in/out work.
 		tableDesc.getProperties().setProperty(PhoenixStorageHandlerConstants.IN_OUT_WORK, PhoenixStorageHandlerConstants.OUT_WORK);
     }
 
@@ -128,7 +128,7 @@ public class PhoenixStorageHandler extends DefaultStorageHandler implements Hive
 		
 		jobProperties.put(hive_metastoreConstants.META_TABLE_STORAGE, this.getClass().getName());
 		
-		// HBase와 직접 작업할 경우 환경변수 세팅
+		// set configuration when direct work with HBase.
 		jobProperties.put(HConstants.ZOOKEEPER_QUORUM, jobProperties.get(PhoenixStorageHandlerConstants.ZOOKEEPER_QUORUM));
 		jobProperties.put(HConstants.ZOOKEEPER_CLIENT_PORT, jobProperties.get(PhoenixStorageHandlerConstants.ZOOKEEPER_PORT));
 		jobProperties.put(HConstants.ZOOKEEPER_ZNODE_PARENT, jobProperties.get(PhoenixStorageHandlerConstants.ZOOKEEPER_PARENT));

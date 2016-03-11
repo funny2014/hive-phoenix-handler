@@ -37,8 +37,8 @@ import org.apache.phoenix.util.QueryUtil;
 
 /**
  * 
- * WARNING : WAL disable 관련 정상적으로 작동하지 않을 가능성이 있음. Mapper나 Tez Task가 Multi-Process로 동작하기 때문에 한 Mapper가 disabled 처리하고
- * 			Statement를 Update하기 전에 다른 Mapper가 enabled 처리하게 되면 WAL이 작동하게 됨.
+ * WARNING : There is possibility that WAL disable setting not working properly. 
+ * 			Because mapper or tez task work on multi processor, If any mapper disabling and another mapper enabling before update. then WAL operated.
  * @author JeongMin Ju
  *
  */
@@ -89,7 +89,7 @@ public class PhoenixRecordWriter<T extends DBWritable>  implements RecordWriter<
 		this.config = config;
         tableName = config.get(PhoenixStorageHandlerConstants.PHOENIX_TABLE_NAME);
         
-        // WAL Disable 처리
+        // Disable WAL
         String walConfigName = tableName.toLowerCase() + PhoenixStorageHandlerConstants.DISABLE_WAL;
         boolean disableWal = config.getBoolean(walConfigName, false);
         if (disableWal) {
@@ -106,7 +106,7 @@ public class PhoenixRecordWriter<T extends DBWritable>  implements RecordWriter<
         	metaDataClient = new MetaDataClient((PhoenixConnection)conn);
         	
         	if (!PhoenixUtil.isDisabledWal(metaDataClient, tableName)) {
-        		// 테이블이 disable_wal=true가 아니면 alter table문을 실행한다.
+        		// execute alter tablel statement if disable_wal is not true.
         		try {
         			PhoenixUtil.alterTableForWalDisable(conn, tableName, true);
         		} catch (ConcurrentTableMutationException e) {
@@ -119,7 +119,7 @@ public class PhoenixRecordWriter<T extends DBWritable>  implements RecordWriter<
         			LOG.debug("<<<<<<<<<< " + tableName + "s wal disabled. >>>>>>>>>>");
         		}
         		
-        		// 종료시 disable_wal 값을 원래 값으로 원복한다.
+        		// restore original value of disable_wal at the end.
         		restoreWalMode = true;
         	}
         }
