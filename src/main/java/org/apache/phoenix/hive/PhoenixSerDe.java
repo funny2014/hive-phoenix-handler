@@ -39,6 +39,7 @@ import org.apache.phoenix.hive.PhoenixSerializer.DmlType;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
 import org.apache.phoenix.hive.mapreduce.PhoenixResultWritable;
 import org.apache.phoenix.hive.objectinspector.PhoenixObjectInspectorFactory;
+import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposerManager;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -66,6 +67,9 @@ public class PhoenixSerDe extends AbstractSerDe {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("<<<<<<<<<< PhoenixSerDe created >>>>>>>>>>");
 		}
+		
+		// Clear All PredicateDecomposer
+		PhoenixPredicateDecomposerManager.cleanPredicateDecomposer();
 	}
 
 	@Override

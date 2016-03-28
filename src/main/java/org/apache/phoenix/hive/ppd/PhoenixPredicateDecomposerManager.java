@@ -38,6 +38,16 @@ public class PhoenixPredicateDecomposerManager {
 	// Therefore Self-Join is likely to wrong InputFormat.getSplits.
 	private static final Map<String, List<PhoenixPredicateDecomposer>> PREDICATE_DECOMPOSER_MAP = Maps.newConcurrentMap();
 	
+	// Clear All PredicateDecomposer.
+	public static void cleanPredicateDecomposer() {
+		PREDICATE_DECOMPOSER_MAP.clear();
+		
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("<<<<<<<<<< predicate-decomposer : " + PREDICATE_DECOMPOSER_MAP + " >>>>>>>>>>");
+			LOG.debug("<<<<<<<<<< Predicate Decomposer Clean >>>>>>>>>>");
+		}
+	}
+
 	public static PhoenixPredicateDecomposer createPredicateDecomposer(String predicateKey, List<String> columnNameList) {
 		List<PhoenixPredicateDecomposer> predicateDecomposerList = PREDICATE_DECOMPOSER_MAP.get(predicateKey);
 		if (predicateDecomposerList == null) {
