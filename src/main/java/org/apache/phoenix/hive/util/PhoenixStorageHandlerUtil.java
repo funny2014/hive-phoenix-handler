@@ -176,12 +176,16 @@ public class PhoenixStorageHandlerUtil {
 		return hostName;
 	}
 
+	public static String getSessionId() {
+		return SessionState.get().getSessionId();
+	}
+	
+	public static String getPrefixPredicateKey() {
+		return "[" + getSessionId() + "]";
+	}
+	
 	public static String getTableKeyOfSession(JobConf jobConf, String tableName) {
-		SessionState sessionState = SessionState.get();
-		
-		String sessionId = sessionState.getSessionId();
-		
-		return new StringBuilder("[").append(sessionId).append("]-").append(tableName).toString();
+		return new StringBuilder(getPrefixPredicateKey()).append("-").append(tableName).toString();
 	}
 	
 	public static Map<String, String> createColumnTypeMap(JobConf jobConf) {

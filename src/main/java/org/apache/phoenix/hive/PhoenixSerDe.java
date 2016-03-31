@@ -40,6 +40,7 @@ import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
 import org.apache.phoenix.hive.mapreduce.PhoenixResultWritable;
 import org.apache.phoenix.hive.objectinspector.PhoenixObjectInspectorFactory;
 import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposerManager;
+import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -69,7 +70,7 @@ public class PhoenixSerDe extends AbstractSerDe {
 		}
 		
 		// Clear All PredicateDecomposer
-		PhoenixPredicateDecomposerManager.cleanPredicateDecomposer();
+		PhoenixPredicateDecomposerManager.cleanPredicateDecomposer(PhoenixStorageHandlerUtil.getPrefixPredicateKey());
 	}
 
 	@Override

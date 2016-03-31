@@ -17,6 +17,7 @@
  */
 package org.apache.phoenix.hive.ppd;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,17 @@ public class PhoenixPredicateDecomposerManager {
 	private static final Map<String, List<PhoenixPredicateDecomposer>> PREDICATE_DECOMPOSER_MAP = Maps.newConcurrentMap();
 	
 	// Clear All PredicateDecomposer.
-	public static void cleanPredicateDecomposer() {
-		PREDICATE_DECOMPOSER_MAP.clear();
+	public static void cleanPredicateDecomposer(String prefixPredicateKey) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("<<<<<<<<<< sessionKey : " + prefixPredicateKey + " >>>>>>>>>>");
+		}
+		
+		for (Iterator<String> iterator = PREDICATE_DECOMPOSER_MAP.keySet().iterator(); iterator.hasNext(); ) {
+			String key = iterator.next();
+			if (key.startsWith(prefixPredicateKey)) {
+				PREDICATE_DECOMPOSER_MAP.remove(key);
+			}
+		}
 		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("<<<<<<<<<< predicate-decomposer : " + PREDICATE_DECOMPOSER_MAP + " >>>>>>>>>>");
