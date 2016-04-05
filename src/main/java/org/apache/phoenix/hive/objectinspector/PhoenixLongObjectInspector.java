@@ -51,4 +51,10 @@ public class PhoenixLongObjectInspector extends AbstractPhoenixObjectInspector<L
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public LongWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new LongWritable((Long)o);
+	}
+
 }

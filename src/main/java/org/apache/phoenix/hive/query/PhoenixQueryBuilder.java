@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
-import org.apache.phoenix.hive.ql.index.IndexSearchCondition;
 import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 import org.apache.phoenix.hive.util.PhoenixUtil;
 
@@ -97,23 +96,24 @@ public class PhoenixQueryBuilder {
 		return sql.toString();
 	}
 	
-	private String makeQueryString(JobConf jobConf, String tableName, List<String> readColumnList, List<IndexSearchCondition> searchConditions, String queryTemplate, String hints) throws IOException {
-		StringBuilder sql = new StringBuilder();
-		List<String> conditionColumnList = buildWhereClause(jobConf, sql, searchConditions);
-		
-		if (conditionColumnList.size() > 0) {
-			addConditionColumnToReadColumn(readColumnList, conditionColumnList);
-			sql.insert(0, queryTemplate.replace("$HINT$",  hints).replace("$COLUMN_LIST$", getSelectColumns(jobConf, tableName, readColumnList)).replace("$TABLE_NAME$", tableName));
-		} else {
-			sql.append(queryTemplate.replace("$HINT$",  hints).replace("$COLUMN_LIST$", getSelectColumns(jobConf, tableName, readColumnList)).replace("$TABLE_NAME$", tableName));
-		}
-		
-		if (LOG.isInfoEnabled()) {
-			LOG.info("<<<<<<<<<< input query : " + sql.toString() + " >>>>>>>>>>");
-		}
-		
-		return sql.toString();
-	}
+	// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+//	private String makeQueryString(JobConf jobConf, String tableName, List<String> readColumnList, List<IndexSearchCondition> searchConditions, String queryTemplate, String hints) throws IOException {
+//		StringBuilder sql = new StringBuilder();
+//		List<String> conditionColumnList = buildWhereClause(jobConf, sql, searchConditions);
+//		
+//		if (conditionColumnList.size() > 0) {
+//			addConditionColumnToReadColumn(readColumnList, conditionColumnList);
+//			sql.insert(0, queryTemplate.replace("$HINT$",  hints).replace("$COLUMN_LIST$", getSelectColumns(jobConf, tableName, readColumnList)).replace("$TABLE_NAME$", tableName));
+//		} else {
+//			sql.append(queryTemplate.replace("$HINT$",  hints).replace("$COLUMN_LIST$", getSelectColumns(jobConf, tableName, readColumnList)).replace("$TABLE_NAME$", tableName));
+//		}
+//		
+//		if (LOG.isInfoEnabled()) {
+//			LOG.info("<<<<<<<<<< input query : " + sql.toString() + " >>>>>>>>>>");
+//		}
+//		
+//		return sql.toString();
+//	}
 	
 	private String getSelectColumns(JobConf jobConf, String tableName, List<String> readColumnList) throws IOException {
 		String selectColumns =  Joiner.on(PhoenixStorageHandlerConstants.COMMA).join(readColumnList);
@@ -154,18 +154,19 @@ public class PhoenixQueryBuilder {
 		return makeQueryString(jobConf, tableName, Lists.newArrayList(readColumnList), whereClause, QUERY_TEMPLATE, hints, columnTypeMap);
 	}
 	
-	public String buildQuery(JobConf jobConf, String tableName, List<String> readColumnList, List<IndexSearchCondition> searchConditions) throws IOException {
-		String hints = getHint(jobConf, tableName);
-		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("<<<<<<<<<< read columns : " + readColumnList + " >>>>>>>>>>");
-			LOG.debug("<<<<<<<<<< table name : " + tableName + " >>>>>>>>>>");
-			LOG.debug("<<<<<<<<<< conditions : " + searchConditions + " >>>>>>>>>>");
-			LOG.debug("<<<<<<<<<< hints : " + hints + " >>>>>>>>>>");
-		}
-		
-		return makeQueryString(jobConf, tableName, Lists.newArrayList(readColumnList), searchConditions, QUERY_TEMPLATE, hints);
-	}
+	// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+//	public String buildQuery(JobConf jobConf, String tableName, List<String> readColumnList, List<IndexSearchCondition> searchConditions) throws IOException {
+//		String hints = getHint(jobConf, tableName);
+//		
+//		if (LOG.isDebugEnabled()) {
+//			LOG.debug("<<<<<<<<<< read columns : " + readColumnList + " >>>>>>>>>>");
+//			LOG.debug("<<<<<<<<<< table name : " + tableName + " >>>>>>>>>>");
+//			LOG.debug("<<<<<<<<<< conditions : " + searchConditions + " >>>>>>>>>>");
+//			LOG.debug("<<<<<<<<<< hints : " + hints + " >>>>>>>>>>");
+//		}
+//		
+//		return makeQueryString(jobConf, tableName, Lists.newArrayList(readColumnList), searchConditions, QUERY_TEMPLATE, hints);
+//	}
 	
 	private String getHint(JobConf jobConf, String tableName) {
 		StringBuilder hints = new StringBuilder("/*+ ");
@@ -539,75 +540,76 @@ public class PhoenixQueryBuilder {
 		return itsMine;
 	}
 	
-	protected List<String> buildWhereClause(JobConf jobConf, StringBuilder sql, List<IndexSearchCondition> searchConditions) throws IOException {
-		if (searchConditions == null || searchConditions.size() == 0) {
-			return Collections.emptyList();
-		}
-		
-		List<String> conditionColumnList = Lists.newArrayList();
-		sql.append(" where ");
-		
-		boolean firstCondition = true;
-		for (IndexSearchCondition condition : searchConditions) {
-			String comparisonOp = condition.getComparisonOp();
-
-			if (comparisonOp.endsWith("GenericUDFBetween") || comparisonOp.endsWith("GenericUDFIn")) {
-				if (condition.getConstantDescs() == null) {
-					continue;
-				}
-			} else if (comparisonOp.endsWith("GenericUDFOPNull") || comparisonOp.endsWith("GenericUDFOPNotNull")) { 
-				// keep going
-			} else if (comparisonOp.endsWith("GenericUDFOPEqual")) {
-				// keep going
-			} else {
-				if (condition.getConstantDesc().getValue() == null) {
-					continue;
-				}
-			}
-			
-			if (!firstCondition) {
-				sql.append(" and ");
-			} else {
-				firstCondition = false;
-			}
-			
-			String columnName = condition.getColumnDesc().getColumn();
-			String typeName = condition.getColumnDesc().getTypeString();
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("<<<<<<<<<< " + columnName + " : " + condition + " >>>>>>>>>>");
-			}
-			
-			conditionColumnList.add(columnName);
-			sql.append(columnName);
-			
-			String[] constantValues = PhoenixStorageHandlerUtil.getConstantValues(condition, comparisonOp);
-			
-			if (comparisonOp.endsWith("UDFOPEqual")) {		// column = 1
-				appendCondition(sql, " = ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("UDFOPEqualOrGreaterThan")) {	// column >= 1
-				appendCondition(sql, " >= ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("UDFOPGreaterThan")) {		// column > 1
-				appendCondition(sql, " > ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("UDFOPEqualOrLessThan")) {	// column <= 1
-				appendCondition(sql, " <= ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("UDFOPLessThan")) {	// column < 1
-				appendCondition(sql, " < ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("UDFOPNotEqual")) {	// column != 1
-				appendCondition(sql, " != ", typeName, constantValues[0]);
-			} else if (comparisonOp.endsWith("GenericUDFBetween")) {
-				appendBetweenCondition(jobConf, sql, condition.isNot(), typeName, constantValues);
-			} else if (comparisonOp.endsWith("GenericUDFIn")) {
-				appendInCondition(sql, condition.isNot(), typeName, constantValues);
-			} else if (comparisonOp.endsWith("GenericUDFOPNull")) {
-				sql.append(" is null ");
-			} else if (comparisonOp.endsWith("GenericUDFOPNotNull")) {
-				sql.append(" is not null ");
-			}
-		}
-		
-		return conditionColumnList;
-	}
+	// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+//	protected List<String> buildWhereClause(JobConf jobConf, StringBuilder sql, List<IndexSearchCondition> searchConditions) throws IOException {
+//		if (searchConditions == null || searchConditions.size() == 0) {
+//			return Collections.emptyList();
+//		}
+//		
+//		List<String> conditionColumnList = Lists.newArrayList();
+//		sql.append(" where ");
+//		
+//		boolean firstCondition = true;
+//		for (IndexSearchCondition condition : searchConditions) {
+//			String comparisonOp = condition.getComparisonOp();
+//
+//			if (comparisonOp.endsWith("GenericUDFBetween") || comparisonOp.endsWith("GenericUDFIn")) {
+//				if (condition.getConstantDescs() == null) {
+//					continue;
+//				}
+//			} else if (comparisonOp.endsWith("GenericUDFOPNull") || comparisonOp.endsWith("GenericUDFOPNotNull")) { 
+//				// keep going
+//			} else if (comparisonOp.endsWith("GenericUDFOPEqual")) {
+//				// keep going
+//			} else {
+//				if (condition.getConstantDesc().getValue() == null) {
+//					continue;
+//				}
+//			}
+//			
+//			if (!firstCondition) {
+//				sql.append(" and ");
+//			} else {
+//				firstCondition = false;
+//			}
+//			
+//			String columnName = condition.getColumnDesc().getColumn();
+//			String typeName = condition.getColumnDesc().getTypeString();
+//			
+//			if (LOG.isDebugEnabled()) {
+//				LOG.debug("<<<<<<<<<< " + columnName + " : " + condition + " >>>>>>>>>>");
+//			}
+//			
+//			conditionColumnList.add(columnName);
+//			sql.append(columnName);
+//			
+//			String[] constantValues = PhoenixStorageHandlerUtil.getConstantValues(condition, comparisonOp);
+//			
+//			if (comparisonOp.endsWith("UDFOPEqual")) {		// column = 1
+//				appendCondition(sql, " = ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("UDFOPEqualOrGreaterThan")) {	// column >= 1
+//				appendCondition(sql, " >= ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("UDFOPGreaterThan")) {		// column > 1
+//				appendCondition(sql, " > ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("UDFOPEqualOrLessThan")) {	// column <= 1
+//				appendCondition(sql, " <= ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("UDFOPLessThan")) {	// column < 1
+//				appendCondition(sql, " < ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("UDFOPNotEqual")) {	// column != 1
+//				appendCondition(sql, " != ", typeName, constantValues[0]);
+//			} else if (comparisonOp.endsWith("GenericUDFBetween")) {
+//				appendBetweenCondition(jobConf, sql, condition.isNot(), typeName, constantValues);
+//			} else if (comparisonOp.endsWith("GenericUDFIn")) {
+//				appendInCondition(sql, condition.isNot(), typeName, constantValues);
+//			} else if (comparisonOp.endsWith("GenericUDFOPNull")) {
+//				sql.append(" is null ");
+//			} else if (comparisonOp.endsWith("GenericUDFOPNotNull")) {
+//				sql.append(" is not null ");
+//			}
+//		}
+//		
+//		return conditionColumnList;
+//	}
 	
 	protected void appendCondition(StringBuilder sql, String comparisonOp, String typeName, String conditionValue) {
 		if (serdeConstants.STRING_TYPE_NAME.equals(typeName)) {

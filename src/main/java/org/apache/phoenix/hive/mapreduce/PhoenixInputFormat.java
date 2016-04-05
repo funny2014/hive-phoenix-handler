@@ -53,9 +53,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.phoenix.compile.QueryPlan;
 import org.apache.phoenix.coprocessor.BaseScannerRegionObserver;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
-import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposer;
-import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposerManager;
-import org.apache.phoenix.hive.ql.index.IndexSearchCondition;
 import org.apache.phoenix.hive.query.PhoenixQueryBuilder;
 import org.apache.phoenix.hive.util.PhoenixConnectionUtil;
 import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
@@ -86,7 +83,7 @@ public class PhoenixInputFormat<T extends DBWritable> implements InputFormat<Wri
 	@Override
 	public InputSplit[] getSplits(JobConf jobConf, int numSplits) throws IOException {
 		String tableName = jobConf.get(PhoenixConfigurationUtil.INPUT_TABLE_NAME);
-		List<IndexSearchCondition> conditionList = null;
+//		List<IndexSearchCondition> conditionList = null;
 		String query = null;
 		String executionEngine = jobConf.get(HiveConf.ConfVars.HIVE_EXECUTION_ENGINE.varname, HiveConf.ConfVars.HIVE_EXECUTION_ENGINE.getDefaultValue());
 		
@@ -96,20 +93,21 @@ public class PhoenixInputFormat<T extends DBWritable> implements InputFormat<Wri
 			LOG.debug("<<<<<<<<<< " + HiveConf.ConfVars.HIVE_EXECUTION_ENGINE.varname + " : " + executionEngine + " >>>>>>>>>>");
 		}
 		
-		if (PhoenixStorageHandlerConstants.MR.equals(executionEngine)) {
-			String predicateKey = PhoenixStorageHandlerUtil.getTableKeyOfSession(jobConf, tableName);
-	
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("<<<<<<<<<< predicateKey : " + predicateKey + " >>>>>>>>>>");
-			}
-			
-			PhoenixPredicateDecomposer predicateDecomposer = PhoenixPredicateDecomposerManager.getPredicateDecomposer(predicateKey);
-			if (predicateDecomposer != null && predicateDecomposer.isCalledPPD()) {
-				conditionList = predicateDecomposer.getSearchConditionList();
-			}
-			
-			query = PhoenixQueryBuilder.getInstance().buildQuery(jobConf, tableName, ColumnProjectionUtils.getReadColumnNames(jobConf), conditionList);
-		} else if (PhoenixStorageHandlerConstants.TEZ.equals(executionEngine)) {
+		// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way.
+//		if (PhoenixStorageHandlerConstants.MR.equals(executionEngine)) {
+//			String predicateKey = PhoenixStorageHandlerUtil.getTableKeyOfSession(jobConf, tableName);
+//	
+//			if (LOG.isDebugEnabled()) {
+//				LOG.debug("<<<<<<<<<< predicateKey : " + predicateKey + " >>>>>>>>>>");
+//			}
+//			
+//			PhoenixPredicateDecomposer predicateDecomposer = PhoenixPredicateDecomposerManager.getPredicateDecomposer(predicateKey);
+//			if (predicateDecomposer != null && predicateDecomposer.isCalledPPD()) {
+//				conditionList = predicateDecomposer.getSearchConditionList();
+//			}
+//			
+//			query = PhoenixQueryBuilder.getInstance().buildQuery(jobConf, tableName, ColumnProjectionUtils.getReadColumnNames(jobConf), conditionList);
+//		} else if (PhoenixStorageHandlerConstants.TEZ.equals(executionEngine)) {
 			Map<String, String> columnTypeMap = PhoenixStorageHandlerUtil.createColumnTypeMap(jobConf);
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("<<<<<<<<<< columnType : " + columnTypeMap + " >>>>>>>>>>");
@@ -117,9 +115,9 @@ public class PhoenixInputFormat<T extends DBWritable> implements InputFormat<Wri
 			
 			String whereClause = jobConf.get(TableScanDesc.FILTER_TEXT_CONF_STR);
 			query = PhoenixQueryBuilder.getInstance().buildQuery(jobConf, tableName, ColumnProjectionUtils.getReadColumnNames(jobConf), whereClause, columnTypeMap);
-		} else {
-			throw new IOException(executionEngine + " execution engine unsupported yet.");
-		}
+//		} else {
+//			throw new IOException(executionEngine + " execution engine unsupported yet.");
+//		}
 		
         final QueryPlan queryPlan = getQueryPlan(jobConf, query);
         final List<KeyRange> allSplits = queryPlan.getSplits();

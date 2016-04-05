@@ -51,4 +51,10 @@ public class PhoenixDoubleObjectInspector extends AbstractPhoenixObjectInspector
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public DoubleWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new DoubleWritable((Double)o);
+	}
+
 }

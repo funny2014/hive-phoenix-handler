@@ -51,4 +51,10 @@ public class PhoenixShortObjectInspector extends AbstractPhoenixObjectInspector<
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public ShortWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new ShortWritable((Short)o);
+	}
+
 }

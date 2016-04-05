@@ -51,4 +51,10 @@ public class PhoenixBooleanObjectInspector extends AbstractPhoenixObjectInspecto
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public BooleanWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new BooleanWritable((Boolean)o);
+	}
+
 }

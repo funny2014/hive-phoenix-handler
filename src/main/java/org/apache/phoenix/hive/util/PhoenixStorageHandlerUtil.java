@@ -41,13 +41,11 @@ import org.apache.hadoop.hbase.util.Strings;
 import org.apache.hadoop.hive.metastore.api.Table;
 import org.apache.hadoop.hive.metastore.api.hive_metastoreConstants;
 import org.apache.hadoop.hive.ql.io.AcidOutputFormat.Options;
-import org.apache.hadoop.hive.ql.plan.ExprNodeConstantDesc;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.net.DNS;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
-import org.apache.phoenix.hive.ql.index.IndexSearchCondition;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -106,31 +104,32 @@ public class PhoenixStorageHandlerUtil {
 		return results;
 	}
 	
-	public static String[] getConstantValues(IndexSearchCondition condition, String comparisonOp) {
-		String[] constantValues = null;
-		
-		if (comparisonOp.endsWith("UDFOPEqual") || comparisonOp.endsWith("UDFOPNotEqual")) {		// key = 1  2016-02-29 Added by JeongMin Ju : Adding not equal
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
-		} else if (comparisonOp.endsWith("UDFOPEqualOrGreaterThan")) {	// key >= 1
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
-		} else if (comparisonOp.endsWith("UDFOPGreaterThan")) {		// key > 1
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
-		} else if (comparisonOp.endsWith("UDFOPEqualOrLessThan")) {	// key <= 1
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
-		} else if (comparisonOp.endsWith("UDFOPLessThan")) {	// key < 1
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
-		} else if (comparisonOp.endsWith("GenericUDFBetween")) {
-			constantValues = new String[]{String.valueOf(condition.getConstantDesc(0).getValue()), String.valueOf(condition.getConstantDesc(1).getValue())};
-		} else if (comparisonOp.endsWith("GenericUDFIn")) {
-			ExprNodeConstantDesc[] constantDescs = condition.getConstantDescs();
-			constantValues = new String[constantDescs.length];
-			for (int i = 0, limit = constantDescs.length; i < limit; i++) {
-				constantValues[i] = String.valueOf(condition.getConstantDesc(i).getValue());
-			}
-		}
-		
-		return constantValues;
-	}
+	// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+//	public static String[] getConstantValues(IndexSearchCondition condition, String comparisonOp) {
+//		String[] constantValues = null;
+//		
+//		if (comparisonOp.endsWith("UDFOPEqual") || comparisonOp.endsWith("UDFOPNotEqual")) {		// key = 1  2016-02-29 Added by JeongMin Ju : Adding not equal
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
+//		} else if (comparisonOp.endsWith("UDFOPEqualOrGreaterThan")) {	// key >= 1
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
+//		} else if (comparisonOp.endsWith("UDFOPGreaterThan")) {		// key > 1
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
+//		} else if (comparisonOp.endsWith("UDFOPEqualOrLessThan")) {	// key <= 1
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
+//		} else if (comparisonOp.endsWith("UDFOPLessThan")) {	// key < 1
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc().getValue())};
+//		} else if (comparisonOp.endsWith("GenericUDFBetween")) {
+//			constantValues = new String[]{String.valueOf(condition.getConstantDesc(0).getValue()), String.valueOf(condition.getConstantDesc(1).getValue())};
+//		} else if (comparisonOp.endsWith("GenericUDFIn")) {
+//			ExprNodeConstantDesc[] constantDescs = condition.getConstantDescs();
+//			constantValues = new String[constantDescs.length];
+//			for (int i = 0, limit = constantDescs.length; i < limit; i++) {
+//				constantValues[i] = String.valueOf(condition.getConstantDesc(i).getValue());
+//			}
+//		}
+//		
+//		return constantValues;
+//	}
 	
 	public static String getRegionLocation(HRegionLocation location, Log log) throws IOException {
 		InetSocketAddress isa = new InetSocketAddress(location.getHostname(), location.getPort());

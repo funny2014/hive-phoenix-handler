@@ -17,7 +17,6 @@
  */
 package org.apache.phoenix.hive;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -43,9 +42,6 @@ import org.apache.hadoop.mapred.OutputFormat;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
 import org.apache.phoenix.hive.mapreduce.PhoenixInputFormat;
 import org.apache.phoenix.hive.mapreduce.PhoenixOutputFormat;
-import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposer;
-import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposerManager;
-import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 import org.apache.phoenix.mapreduce.util.PhoenixConfigurationUtil;
 
 /**
@@ -155,18 +151,21 @@ public class PhoenixStorageHandler extends DefaultStorageHandler implements Hive
 
 	@Override
 	public DecomposedPredicate decomposePredicate(JobConf jobConf, Deserializer deserializer, ExprNodeDesc predicate) {
-		PhoenixSerDe phoenixSerDe = (PhoenixSerDe)deserializer;
-		String tableName = phoenixSerDe.getTableProperties().getProperty(PhoenixStorageHandlerConstants.PHOENIX_TABLE_NAME);
-		String predicateKey = PhoenixStorageHandlerUtil.getTableKeyOfSession(jobConf, tableName);
+//		PhoenixSerDe phoenixSerDe = (PhoenixSerDe)deserializer;
+//		String tableName = phoenixSerDe.getTableProperties().getProperty(PhoenixStorageHandlerConstants.PHOENIX_TABLE_NAME);
+//		String predicateKey = PhoenixStorageHandlerUtil.getTableKeyOfSession(jobConf, tableName);
+//		
+//		if (LOG.isDebugEnabled()) {
+//			LOG.debug("<<<<<<<<<< predicateKey : " + predicateKey + " >>>>>>>>>>");
+//		}
+//		
+//		List<String> columnNameList = phoenixSerDe.getSerdeParams().getColumnNames();
+//		PhoenixPredicateDecomposer predicateDecomposer = PhoenixPredicateDecomposerManager.createPredicateDecomposer(predicateKey, columnNameList);
+//		
+//		return predicateDecomposer.decomposePredicate(predicate);
 		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("<<<<<<<<<< predicateKey : " + predicateKey + " >>>>>>>>>>");
-		}
-		
-		List<String> columnNameList = phoenixSerDe.getSerdeParams().getColumnNames();
-		PhoenixPredicateDecomposer predicateDecomposer = PhoenixPredicateDecomposerManager.createPredicateDecomposer(predicateKey, columnNameList);
-		
-		return predicateDecomposer.decomposePredicate(predicate);
+		// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+		return null;
 	}
 
 	@Override

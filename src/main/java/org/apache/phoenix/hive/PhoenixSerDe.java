@@ -39,8 +39,6 @@ import org.apache.phoenix.hive.PhoenixSerializer.DmlType;
 import org.apache.phoenix.hive.constants.PhoenixStorageHandlerConstants;
 import org.apache.phoenix.hive.mapreduce.PhoenixResultWritable;
 import org.apache.phoenix.hive.objectinspector.PhoenixObjectInspectorFactory;
-import org.apache.phoenix.hive.ppd.PhoenixPredicateDecomposerManager;
-import org.apache.phoenix.hive.util.PhoenixStorageHandlerUtil;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -69,8 +67,9 @@ public class PhoenixSerDe extends AbstractSerDe {
 			LOG.debug("<<<<<<<<<< PhoenixSerDe created >>>>>>>>>>");
 		}
 		
-		// Clear All PredicateDecomposer
-		PhoenixPredicateDecomposerManager.cleanPredicateDecomposer(PhoenixStorageHandlerUtil.getPrefixPredicateKey());
+		// 2016-04-04 modified by JeongMin Ju : Changed predicate push down processing to tez-way. reference PhoenixInputFormat.getSplits.
+//		// Clear All PredicateDecomposer
+//		PhoenixPredicateDecomposerManager.cleanPredicateDecomposer(PhoenixStorageHandlerUtil.getPrefixPredicateKey());
 	}
 
 	@Override

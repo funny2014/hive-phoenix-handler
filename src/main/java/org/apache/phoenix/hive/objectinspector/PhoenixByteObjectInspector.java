@@ -51,4 +51,10 @@ public class PhoenixByteObjectInspector extends AbstractPhoenixObjectInspector<B
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public ByteWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new ByteWritable((Byte)o);
+	}
+
 }

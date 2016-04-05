@@ -50,5 +50,11 @@ public class PhoenixIntObjectInspector extends AbstractPhoenixObjectInspector<In
 		
 		return value;
 	}
+	
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public IntWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new IntWritable((Integer)o);
+	}
 
 }

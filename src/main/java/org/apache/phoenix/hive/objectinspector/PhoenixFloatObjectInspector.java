@@ -51,4 +51,10 @@ public class PhoenixFloatObjectInspector extends AbstractPhoenixObjectInspector<
 		return value;
 	}
 
+	// 2016-04-04 added by JeongMin Ju : Used when map-join
+	@Override
+	public FloatWritable getPrimitiveWritableObject(Object o) {
+		return o == null ? null : new FloatWritable((Float)o);
+	}
+
 }
