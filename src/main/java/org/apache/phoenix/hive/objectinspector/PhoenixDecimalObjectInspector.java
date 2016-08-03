@@ -20,7 +20,6 @@ package org.apache.phoenix.hive.objectinspector;
 import java.math.BigDecimal;
 
 import org.apache.hadoop.hive.common.type.HiveDecimal;
-import org.apache.hadoop.hive.metastore.api.Decimal;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveDecimalObjectInspector;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
@@ -37,7 +36,8 @@ public class PhoenixDecimalObjectInspector extends AbstractPhoenixObjectInspecto
 
 	@Override
 	public Object copyObject(Object o) {
-		return o == null ? null : new Decimal((Decimal)o);
+//		return o == null ? null : new Decimal((Decimal)o);
+		return o == null ? null : new BigDecimal(((BigDecimal)o).toBigInteger(), ((BigDecimal)o).scale());		// 2016-04-06 Modified by JeongMin Ju
 	}
 
 	@Override
