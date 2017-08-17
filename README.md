@@ -127,7 +127,7 @@ so simple.
 
 ##### Create External Table when Phoenix table exist in HBase
 ```
-create external date_dim (
+create external table date_dim (
   d_date_sk                 INT,
   d_date_id                 VARCHAR(16),
   d_date                    DATE,
